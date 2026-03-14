@@ -7,12 +7,12 @@ from flask import Flask
 from threading import Thread
 import os
 
-# --- خدعة تشغيل الموقع عشان Render ميفصلش ---
+# --- خدعة تشغيل الموقع عشان Render ميفصلش البوت (24 ساعة مجاناً) ---
 app = Flask('')
 @app.route('/')
 def home(): return "Bot is Online!"
 def run():
-    # Render بيطلب بورت معين، السطر ده هو اللي هيصلح الـ Failed
+    # استخدام البورت المخصص لـ Render لتجنب خطأ الـ Failed
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
 def keep_alive():
@@ -38,12 +38,12 @@ async def play(ctx, *, search: str):
     async with ctx.typing():
         search_res = VideosSearch(search, limit=1).result()['result']
         if not search_res: return await ctx.send("❌ ملقيتش الأغنية!")
-        url = search_res[0]['link'] # تعديل بسيط هنا لجلب الرابط
+        url = search_res[0]['link']
         with YoutubeDL(ytdl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
             audio_url = info['url']
-    await ctx.send(f"🎵 بدأنا: {info['title']}")
-    # استخدام FFmpeg المباشر للسيرفر
+    await ctx.send(f"🎵 بدأنا تشغيل: **{info['title']}**")
+    # السيرفر بيتعرف على FFmpeg أوتوماتيكياً من المكتبات
     vc.play(discord.FFmpegOpusAudio(audio_url, **FFMPEG_OPTIONS))
 
 @bot.command()
@@ -52,9 +52,9 @@ async def stop(ctx):
 
 async def main():
     async with bot:
-        keep_alive() # تشغيل الموقع الوهمي
-        # التوكن بتاعك
-        await bot.start('MTQ4MTgxNjgzOTc3NTU4NDQ0MA.GCLsO2.kvUhWdHCJVz6OaU1IXx2daL410YHQE6qBhldaU')
+        keep_alive() # تشغيل الموقع الوهمي لضمان الاستمرارية
+        # --- حط التوكن الجديد بتاعك تحت هنا ---
+        await bot.start('MTQ4MTgxNjgzOTc3NTU4NDQ0MA.GqIlIa.OiB30et3TGouqFXg-K909ynQsZDSi6ivx2Lvms')
 
 if __name__ == "__main__":
     asyncio.run(main())
